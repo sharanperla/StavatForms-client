@@ -1,7 +1,9 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext";
 
 const SignUp = () => {
+  const { login } = useAuth(); 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -53,7 +55,7 @@ const SignUp = () => {
            console.log(data);
         if (data.success) {
           // Store the session token in localStorage or a secure cookie
-          localStorage.setItem("session_token", data.session_token)
+          login(data.session_token);
           navigate("/dashboard")
         } else {
           setServerError(data.message || "An error occurred during sign up")

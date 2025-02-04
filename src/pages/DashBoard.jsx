@@ -1,18 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SuccessPage from './PurchaseSuccess';
 import FormResponses from './FormResponse';
 
-// Mock data for form templates
-const formTemplates = [
-  { id: 1, name: 'Simple Contact Form', description: 'Basic contact information collection', price: 19.99, image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80' },
-  { id: 2, name: 'Advanced Lead Capture', description: 'Detailed form for qualified lead generation', price: 29.99, image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80' },
-  { id: 3, name: 'Feedback Form', description: 'Collect valuable customer feedback', price: 24.99, image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80' },
-  { id: 4, name: 'Event Registration', description: 'Streamlined event signup process', price: 34.99, image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80' },
-  { id: 5, name: 'Survey Template', description: 'Comprehensive survey for data collection', price: 39.99, image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80' },
-];
-
-// Mock data for purchased templates
+// Mock data for purchased templates (unchanged)
 const purchasedTemplates = [
   { 
     id: 1, 
@@ -40,10 +31,53 @@ function Dashboard() {
   const [showSuccessPage, setShowSuccessPage] = useState(false);
   const [generatedLink, setGeneratedLink] = useState('');
   const [viewingResponses, setViewingResponses] = useState(null);
+  const [availableTemplates, setAvailableTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch available templates from the backend or API
+    const fetchTemplates = async () => {
+      try {
+        const response = await fetch('https://khaki-mouse-381632.hostingersite.com/server/forms/get_forms.php'); 
+        const data = await response.json();
+        console.log(data.success);
+        if (data) {
+          setAvailableTemplates(data.forms);
+        } else {
+          throw new Error('Failed to fetch templates');
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
 
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
+  };
+
+  const handleSignOut = async () => {
+    const token = localStorage.getItem("session_token");
+    console.log(token);
+    const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/auth/signout.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      localStorage.removeItem("session_token");
+      navigate("/signin");
+    } else {
+      alert("Logout failed!");
+    }
   };
 
   const handlePurchase = (template) => {
@@ -77,7 +111,7 @@ function Dashboard() {
               <span className="text-2xl font-bold text-blue-600">Stavat</span>
             </div>
             <div className="flex items-center">
-              <button className="text-gray-600 hover:text-gray-900">
+              <button onClick={handleSignOut} className="text-gray-600 hover:text-gray-900">
                 Sign Out
               </button>
             </div>
@@ -118,32 +152,40 @@ function Dashboard() {
 
           {/* Available Templates */}
           {activeTab === 'available' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {formTemplates.map((template) => (
-                <div 
-                  key={template.id} 
-                  className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-transform hover:scale-105"
-                  onClick={() => handleTemplateClick(template)}
-                >
-                  <img src={template.image || "/placeholder.svg"} alt={template.name} className="w-full h-48 object-cover" />
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold mb-2">{template.name}</h3>
-                    <p className="text-gray-600 mb-4">{template.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-blue-600 font-bold">${template.price}</span>
-                      <button 
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePurchase(template);
-                        }}
-                      >
-                        Purchase
-                      </button>
+            <div>
+              {loading ? (
+                <p>Loading templates...</p>
+              ) : error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {availableTemplates.map((template) => (
+                    <div 
+                      key={template.id} 
+                      className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-transform hover:scale-105"
+                      onClick={() => handleTemplateClick(template)}
+                    >
+                      <img src={template.image || "/placeholder.svg"} alt={template.name} className="w-full h-48 object-cover" />
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold mb-2">{template.name}</h3>
+                        <p className="text-gray-600 mb-4">{template.description}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-blue-600 font-bold">${template.price}</span>
+                          <button 
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePurchase(template);
+                            }}
+                          >
+                            Purchase
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
 
