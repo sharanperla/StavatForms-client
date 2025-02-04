@@ -1,0 +1,202 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SuccessPage from './PurchaseSuccess';
+import FormResponses from './FormResponse';
+
+// Mock data for form templates
+const formTemplates = [
+  { id: 1, name: 'Simple Contact Form', description: 'Basic contact information collection', price: 19.99, image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80' },
+  { id: 2, name: 'Advanced Lead Capture', description: 'Detailed form for qualified lead generation', price: 29.99, image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80' },
+  { id: 3, name: 'Feedback Form', description: 'Collect valuable customer feedback', price: 24.99, image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80' },
+  { id: 4, name: 'Event Registration', description: 'Streamlined event signup process', price: 34.99, image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80' },
+  { id: 5, name: 'Survey Template', description: 'Comprehensive survey for data collection', price: 39.99, image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80' },
+];
+
+// Mock data for purchased templates
+const purchasedTemplates = [
+  { 
+    id: 1, 
+    name: 'Simple Contact Form', 
+    url: 'https://stavat.com/form/abc123',
+    results: [
+      { name: 'John Doe', email: 'john@example.com', message: 'Great product!' },
+      { name: 'Jane Smith', email: 'jane@example.com', message: 'I have a question about...' },
+    ]
+  },
+  { 
+    id: 3, 
+    name: 'Feedback Form', 
+    url: 'https://stavat.com/form/def456',
+    results: [
+      { name: 'Alice Johnson', email: 'alice@example.com', rating: 5, feedback: 'Excellent service!' },
+      { name: 'Bob Williams', email: 'bob@example.com', rating: 4, feedback: 'Good, but could improve...' },
+    ]
+  },
+];
+
+function Dashboard() {
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [activeTab, setActiveTab] = useState('available');
+  const [showSuccessPage, setShowSuccessPage] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState('');
+  const [viewingResponses, setViewingResponses] = useState(null);
+  const navigate = useNavigate();
+
+  const handleTemplateClick = (template) => {
+    setSelectedTemplate(template);
+  };
+
+  const handlePurchase = (template) => {
+    // Simulate purchase process
+    console.log(`Initiating purchase for ${template.name}`);
+    // Generate a random link (in a real app, this would come from the backend)
+    const link = `https://stavat.com/form/${Math.random().toString(36).substr(2, 6)}`;
+    setGeneratedLink(link);
+    setShowSuccessPage(true);
+  };
+
+  const handleViewResponses = (template) => {
+    setViewingResponses(template);
+  };
+
+  if (showSuccessPage) {
+    return <SuccessPage link={generatedLink} onClose={() => setShowSuccessPage(false)} />;
+  }
+
+  if (viewingResponses) {
+    return <FormResponses template={viewingResponses} onBack={() => setViewingResponses(null)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <span className="text-2xl font-bold text-blue-600">Stavat</span>
+            </div>
+            <div className="flex items-center">
+              <button className="text-gray-600 hover:text-gray-900">
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
+          
+          {/* Tabs */}
+          <div className="mb-4">
+            <nav className="flex space-x-4">
+              <button
+                className={`px-3 py-2 font-medium text-sm rounded-md ${
+                  activeTab === 'available'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setActiveTab('available')}
+              >
+                Available Templates
+              </button>
+              <button
+                className={`px-3 py-2 font-medium text-sm rounded-md ${
+                  activeTab === 'purchased'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setActiveTab('purchased')}
+              >
+                Purchased Templates
+              </button>
+            </nav>
+          </div>
+
+          {/* Available Templates */}
+          {activeTab === 'available' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {formTemplates.map((template) => (
+                <div 
+                  key={template.id} 
+                  className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-transform hover:scale-105"
+                  onClick={() => handleTemplateClick(template)}
+                >
+                  <img src={template.image || "/placeholder.svg"} alt={template.name} className="w-full h-48 object-cover" />
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold mb-2">{template.name}</h3>
+                    <p className="text-gray-600 mb-4">{template.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-600 font-bold">${template.price}</span>
+                      <button 
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePurchase(template);
+                        }}
+                      >
+                        Purchase
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Purchased Templates */}
+          {activeTab === 'purchased' && (
+            <div className="space-y-6">
+              {purchasedTemplates.map((template) => (
+                <div key={template.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold mb-2">{template.name}</h3>
+                    <p className="text-gray-600 mb-2">Generated URL: <a href={template.url} className="text-blue-600 hover:underline">{template.url}</a></p>
+                    <button 
+                      className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                      onClick={() => handleViewResponses(template)}
+                    >
+                      View Responses
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Template Details Modal */}
+      {selectedTemplate && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={() => setSelectedTemplate(null)}>
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onClick={e => e.stopPropagation()}>
+            <div className="mt-3 text-center">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">{selectedTemplate.name}</h3>
+              <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500">
+                  {selectedTemplate.description}
+                </p>
+                <p className="text-blue-600 font-bold mt-4">
+                  ${selectedTemplate.price}
+                </p>
+              </div>
+              <div className="items-center px-4 py-3">
+                <button
+                  className="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  onClick={() => handlePurchase(selectedTemplate)}
+                >
+                  Purchase
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Dashboard;
