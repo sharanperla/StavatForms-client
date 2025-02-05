@@ -80,14 +80,39 @@ function Dashboard() {
     }
   };
 
-  const handlePurchase = (template) => {
-    // Simulate purchase process
-    console.log(`Initiating purchase for ${template.name}`);
-    // Generate a random link (in a real app, this would come from the backend)
-    const link = `https://stavat.com/form/${Math.random().toString(36).substr(2, 6)}`;
-    setGeneratedLink(link);
-    setShowSuccessPage(true);
+  const handlePurchase = async (template) => {
+    console.log(template);
+    try {
+      const token = localStorage.getItem("session_token");
+   console.log(token);
+    if (!token) {
+      alert("No session token found.");
+      return;
+    }
+
+      const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/forms/generate-link.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ template_id: template.id })
+      });
+  
+      const data = await response.json();
+      console.log(data,'data');
+      if (data.success) {
+        setGeneratedLink(data.link);
+        setShowSuccessPage(true);
+      } else {
+        alert("Purchase failed: " + data.error);
+      }
+    } catch (error) {
+      console.error("Error purchasing template:", error);
+      alert("An error occurred.");
+    }
   };
+  
 
   const handleViewResponses = (template) => {
     setViewingResponses(template);

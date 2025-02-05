@@ -38,6 +38,7 @@ function SignIn() {
 
         const data = await response.json();
         if (data.success) {
+          console.log(data.token);
           login(data.token); // Save token and update auth state
           navigate("/dashboard");
         } else {
