@@ -7,12 +7,15 @@ export const AuthProvider = ({ children }) => {
     return !!localStorage.getItem("session_token");
   });
 
+  const [userId,setUserId]=useState('')
+
   useEffect(() => {
     setIsAuthenticated(!!localStorage.getItem("session_token"));
   }, []);
 
-  const login = (token) => {
+  const login = (token,user_Id) => {
     localStorage.setItem("session_token", token);
+    setUserId(user_Id)
     setIsAuthenticated(true);
   };
 
@@ -22,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout ,userId}}>
       {children}
     </AuthContext.Provider>
   );

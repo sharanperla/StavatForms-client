@@ -3,9 +3,9 @@ import { AuthProvider } from "./context/AuthContext";  // Import AuthProvider
 import HomePage from "./pages/HomePage";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/DashBoard";
 import Error from "./pages/Error";
-import Form1 from "./pages/Form1";
+import FormPage from "./pages/Form1";
 import PrivateRoute from "./middleware/PrivateRoute"; // Import ProtectedRoute
 
 const appRouter = createBrowserRouter([
@@ -34,10 +34,10 @@ const appRouter = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/form1",
+    path: "/form/:formId",
     element: (
       <PrivateRoute>
-        <Form1 />
+        <FormPage />
       </PrivateRoute>
     ),
     errorElement: <Error />,

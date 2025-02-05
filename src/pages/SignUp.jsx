@@ -55,7 +55,7 @@ const SignUp = () => {
            console.log(data);
         if (data.success) {
           // Store the session token in localStorage or a secure cookie
-          login(data.session_token);
+          login(data.jwt_token,data.user_id);
           navigate("/dashboard")
         } else {
           setServerError(data.message || "An error occurred during sign up")

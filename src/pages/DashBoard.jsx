@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SuccessPage from './PurchaseSuccess';
 import FormResponses from './FormResponse';
+import { useAuth } from '../context/AuthContext';
 
 // Mock data for purchased templates (unchanged)
 const purchasedTemplates = [
@@ -35,7 +36,8 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
+  const {userId}=useAuth();
+console.log('userId=',userId);
   useEffect(() => {
     // Fetch available templates from the backend or API
     const fetchTemplates = async () => {
@@ -63,6 +65,7 @@ function Dashboard() {
   };
 
   const handleSignOut = async () => {
+    console.log('logging out');
     const token = localStorage.getItem("session_token");
     console.log(token);
     const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/auth/signout.php", {
@@ -72,6 +75,7 @@ function Dashboard() {
     });
 
     const result = await response.json();
+    console.log(result);
     if (result.success) {
       localStorage.removeItem("session_token");
       navigate("/signin");
