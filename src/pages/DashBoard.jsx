@@ -1,113 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SuccessPage from './PurchaseSuccess';
-import FormResponses from './FormResponse';
-import { useAuth } from '../context/AuthContext';
-
-// Mock data for purchased templates (unchanged)
-const purchasedTemplates = [
-  { 
-    id: 1, 
-    name: 'Simple Contact Form', 
-    url: 'https://stavat.com/form/abc123',
-    results: [
-      { name: 'John Doe', email: 'john@example.com', message: 'Great product!' },
-      { name: 'Jane Smith', email: 'jane@example.com', message: 'I have a question about...' },
-    ]
-  },
-  { 
-    id: 3, 
-    name: 'Feedback Form', 
-    url: 'https://stavat.com/form/def456',
-    results: [
-      { name: 'Alice Johnson', email: 'alice@example.com', rating: 5, feedback: 'Excellent service!' },
-      { name: 'Bob Williams', email: 'bob@example.com', rating: 4, feedback: 'Good, but could improve...' },
-    ]
-  },
-];
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import SuccessPage from "./PurchaseSuccess";
+import FormResponses from "./FormResponse";
+import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [activeTab, setActiveTab] = useState('available');
+  const [activeTab, setActiveTab] = useState("available");
   const [showSuccessPage, setShowSuccessPage] = useState(false);
-  const [generatedLink, setGeneratedLink] = useState('');
+  const [generatedLink, setGeneratedLink] = useState("");
   const [viewingResponses, setViewingResponses] = useState(null);
   const [availableTemplates, setAvailableTemplates] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [purchasedTemplates, setPurchasedTemplates] = useState([]);
+  const [loadingPurchased, setLoadingPurchased] = useState(false);
+  const [errorPurchased, setErrorPurchased] = useState(null);
   const navigate = useNavigate();
-  const {userId}=useAuth();
-console.log('userId=',userId);
-  useEffect(() => {
-    // Fetch available templates from the backend or API
-    const fetchTemplates = async () => {
-      try {
-        const response = await fetch('https://khaki-mouse-381632.hostingersite.com/server/forms/get_forms.php'); 
-        const data = await response.json();
-        console.log(data.success);
-        if (data) {
-          setAvailableTemplates(data.forms);
-        } else {
-          throw new Error('Failed to fetch templates');
-        }
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {logout}=useAuth()
+ 
+    const userId=localStorage.getItem('userId');
+   
+  console.log("userId=", userId);
 
-    fetchTemplates();
-  }, []);
+  // Fetch available templates from the backend or API
+  const fetchTemplates = async () => {
+    setLoading(true);
+    try {
+      const cachedTemplates = localStorage.getItem("availableTemplates");
+  
+      if (cachedTemplates) {
+        setAvailableTemplates(JSON.parse(cachedTemplates));
+        setLoading(false);
+        return;
+      }
+  
+      const response = await fetch(
+        "https://khaki-mouse-381632.hostingersite.com/server/forms/get_forms.php"
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch templates");
+      }
+  
+      const data = await response.json();
+  
+      if (data.success && data.forms) {
+        setAvailableTemplates(data.forms);
+        localStorage.setItem("availableTemplates", JSON.stringify(data.forms));
+      } else {
+        throw new Error(data.message || "No templates available");
+      }
+    } catch (error) {
+      console.error("Error fetching templates:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
   };
 
   const handleSignOut = async () => {
-    console.log('logging out');
+    console.log("logging out");
     const token = localStorage.getItem("session_token");
     console.log(token);
-    const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/auth/signout.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
-    });
+    const response = await fetch(
+      "https://khaki-mouse-381632.hostingersite.com/server/auth/signout.php",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      }
+    );
 
     const result = await response.json();
     console.log(result);
     if (result.success) {
-      localStorage.removeItem("session_token");
+      logout();
       navigate("/signin");
     } else {
       alert("Logout failed!");
     }
   };
 
+
   const handlePurchase = async (template) => {
-    console.log(template);
     try {
       const token = localStorage.getItem("session_token");
-   console.log(token);
-    if (!token) {
-      alert("No session token found.");
-      return;
-    }
-
+      if (!token) {
+        alert("No session token found.");
+        return;
+      }
+  
       const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/forms/generate-link.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ template_id: template.id })
+        body: JSON.stringify({ template_id: template.id }),
       });
   
       const data = await response.json();
-      console.log(data,'data');
       if (data.success) {
         setGeneratedLink(data.link);
         setShowSuccessPage(true);
+        fetchPurchasedTemplates(); // Reload purchased templates after purchase
       } else {
         alert("Purchase failed: " + data.error);
       }
@@ -118,16 +120,84 @@ console.log('userId=',userId);
   };
   
 
-  const handleViewResponses = (template) => {
+  const handleViewResponses = async (template) => {
+    await fetchPurchasedTemplates(true); // Force reload to ensure fresh responses
     setViewingResponses(template);
   };
+  
+
+  const fetchPurchasedTemplates = async (forceReload = false) => {
+    setLoadingPurchased(true);
+    const cachedPurchased = localStorage.getItem("purchasedTemplates");
+  try {
+    if (!forceReload && cachedPurchased) {
+      setPurchasedTemplates(JSON.parse(cachedPurchased));
+      setLoadingPurchased(false);
+      return;
+   
+    }
+      const token = localStorage.getItem("session_token");
+  
+      if (!token) {
+        throw new Error("No session token found.");
+      }
+      const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/forms/get_form_responses.php", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch purchased templates");
+      }
+      const data = await response.json();
+      if (data.success && data.templates) {
+        setPurchasedTemplates(data.templates);
+        localStorage.setItem("purchasedTemplates", JSON.stringify(data.templates));
+      } else {
+        throw new Error(data.message || "No purchased templates available");
+        
+      }
+    } catch (error) {
+      console.error("Error fetching purchased templates:", error);
+      setErrorPurchased(error.message);
+    } finally {
+      setLoadingPurchased(false);
+    }
+  };
+  
+
+
+
+  useEffect(() => {
+    fetchTemplates();
+    if (userId) {
+      fetchPurchasedTemplates();
+    }
+  }, []);
 
   if (showSuccessPage) {
-    return <SuccessPage link={generatedLink} onClose={() => setShowSuccessPage(false)} />;
+    return (
+      <SuccessPage
+        link={generatedLink}
+        onClose={() =>{ 
+          setShowSuccessPage(false)
+          localStorage.removeItem("purchasedTemplates");
+          window.location.reload();
+        }}
+      />
+    );
   }
 
   if (viewingResponses) {
-    return <FormResponses template={viewingResponses} onBack={() => setViewingResponses(null)} />;
+    return (
+      <FormResponses
+        template={viewingResponses}
+        onBack={() => setViewingResponses(null)}
+      />
+    );
   }
 
   return (
@@ -140,7 +210,10 @@ console.log('userId=',userId);
               <span className="text-2xl font-bold text-blue-600">Stavat</span>
             </div>
             <div className="flex items-center">
-              <button onClick={handleSignOut} className="text-gray-600 hover:text-gray-900">
+              <button
+                onClick={handleSignOut}
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Sign Out
               </button>
             </div>
@@ -152,27 +225,27 @@ console.log('userId=',userId);
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
-          
+
           {/* Tabs */}
           <div className="mb-4">
             <nav className="flex space-x-4">
               <button
                 className={`px-3 py-2 font-medium text-sm rounded-md ${
-                  activeTab === 'available'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:text-gray-700'
+                  activeTab === "available"
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
-                onClick={() => setActiveTab('available')}
+                onClick={() => setActiveTab("available")}
               >
                 Available Templates
               </button>
               <button
                 className={`px-3 py-2 font-medium text-sm rounded-md ${
-                  activeTab === 'purchased'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:text-gray-700'
+                  activeTab === "purchased"
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
-                onClick={() => setActiveTab('purchased')}
+                onClick={() => setActiveTab("purchased")}
               >
                 Purchased Templates
               </button>
@@ -180,7 +253,7 @@ console.log('userId=',userId);
           </div>
 
           {/* Available Templates */}
-          {activeTab === 'available' && (
+          {activeTab === "available" && (
             <div>
               {loading ? (
                 <p>Loading templates...</p>
@@ -189,18 +262,28 @@ console.log('userId=',userId);
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {availableTemplates.map((template) => (
-                    <div 
-                      key={template.id} 
+                    <div
+                      key={template.id}
                       className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-transform hover:scale-105"
                       onClick={() => handleTemplateClick(template)}
                     >
-                      <img src={template.image || "/placeholder.svg"} alt={template.name} className="w-full h-48 object-cover" />
+                      <img
+                        src={template.image || "/placeholder.svg"}
+                        alt={template.name}
+                        className="w-full h-48 object-cover"
+                      />
                       <div className="p-4">
-                        <h3 className="text-lg font-semibold mb-2">{template.name}</h3>
-                        <p className="text-gray-600 mb-4">{template.description}</p>
+                        <h3 className="text-lg font-semibold mb-2">
+                          {template.name}
+                        </h3>
+                        <p className="text-gray-600 mb-4">
+                          {template.description}
+                        </p>
                         <div className="flex justify-between items-center">
-                          <span className="text-blue-600 font-bold">${template.price}</span>
-                          <button 
+                          <span className="text-blue-600 font-bold">
+                            ${template.price}
+                          </span>
+                          <button
                             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -218,23 +301,44 @@ console.log('userId=',userId);
             </div>
           )}
 
-          {/* Purchased Templates */}
-          {activeTab === 'purchased' && (
+          {/* Purchased Templates */ console.log(purchasedTemplates)}
+          {activeTab === "purchased" && (
             <div className="space-y-6">
-              {purchasedTemplates.map((template) => (
-                <div key={template.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold mb-2">{template.name}</h3>
-                    <p className="text-gray-600 mb-2">Generated URL: <a href={template.url} className="text-blue-600 hover:underline">{template.url}</a></p>
-                    <button 
-                      className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                      onClick={() => handleViewResponses(template)}
-                    >
-                      View Responses
-                    </button>
+              {loadingPurchased ? (
+                <p>Loading purchased templates...</p>
+              ) : errorPurchased ? (
+                <p className="text-red-500">{errorPurchased}</p>
+              ) : purchasedTemplates.length === 0 ? (
+                <p>No purchased templates found.</p>
+              ) : (
+                purchasedTemplates.map((template) => (
+                  <div
+                    key={template.template_id}
+                    className="bg-white rounded-lg shadow-sm overflow-hidden"
+                  >
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold mb-2">
+                        {template.name}
+                      </h3>
+                      <p className="text-gray-600 mb-2">
+                        Generated URL:{" "}
+                        <a
+                          href={template.url}
+                          className="text-blue-600 hover:underline"
+                        >
+                          {template.url}
+                        </a>
+                      </p>
+                      <button
+                        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                        onClick={() => handleViewResponses(template)}
+                      >
+                        View Responses
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
         </div>
@@ -242,10 +346,18 @@ console.log('userId=',userId);
 
       {/* Template Details Modal */}
       {selectedTemplate && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={() => setSelectedTemplate(null)}>
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          onClick={() => setSelectedTemplate(null)}
+        >
+          <div
+            className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mt-3 text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">{selectedTemplate.name}</h3>
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                {selectedTemplate.name}
+              </h3>
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-gray-500">
                   {selectedTemplate.description}

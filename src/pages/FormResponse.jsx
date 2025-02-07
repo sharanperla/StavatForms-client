@@ -1,44 +1,49 @@
 function FormResponses({ template, onBack }) {
-    return (
-      <div className="min-h-screen bg-gray-100">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">Responses for {template.name}</h1>
-              <button
-                onClick={onBack}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors"
-              >
-                Back to Dashboard
-              </button>
-            </div>
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+  console.log('tempt',template);
+  return (
+    <div className="min-h-screen bg-gray-100" id={`template-${template.template_id}`}>
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Responses for {template.name}</h1>
+            <button
+              onClick={onBack}
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+            {template.responses && template.responses.length > 0 ? (
               <ul className="divide-y divide-gray-200">
-                {template.results.map((result, index) => (
-                  <li key={index} className="p-4">
-                    <div className="flex justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{result.name}</p>
-                        <p className="text-sm text-gray-500">{result.email}</p>
-                      </div>
-                      {result.rating && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Rating: {result.rating}/5
-                        </span>
-                      )}
+                {template.responses.map((response, index) => (
+                  <li key={index} className="p-4 border-b">
+                    <div className="flex flex-col space-y-2">
+                      {Object.entries(response).map(([key, value]) => (
+                        <p key={key} className="text-sm text-gray-700">
+                          <span className="font-medium text-gray-900 capitalize">
+                            {key.replace(/_/g, " ")}:
+                          </span>{" "}
+                          {typeof value === "object" ? (
+                            <pre className="bg-gray-50 p-2 rounded text-sm">{JSON.stringify(value, null, 2)}</pre>
+                          ) : (
+                            value
+                          )}
+                        </p>
+                      ))}
                     </div>
-                    {result.message && <p className="mt-2 text-sm text-gray-600">{result.message}</p>}
-                    {result.feedback && <p className="mt-2 text-sm text-gray-600">{result.feedback}</p>}
                   </li>
                 ))}
               </ul>
-            </div>
+            ) : (
+              <p className="p-6 text-gray-500 text-center">No responses available for this template.</p>
+            )}
           </div>
         </div>
       </div>
-    )
-  }
-  
-  export default FormResponses
-  
-  
+    </div>
+  );
+}
+
+export default FormResponses;

@@ -59,7 +59,7 @@ function FormPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        form_id: formId,
+        template_id: formId,
         user_id: userId,
         response: formData
       }),

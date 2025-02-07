@@ -36,9 +36,9 @@ const appRouter = createBrowserRouter([
   {
     path: "/form/:formId",
     element: (
-      <PrivateRoute>
+ 
         <FormPage />
-      </PrivateRoute>
+   
     ),
     errorElement: <Error />,
   },

@@ -15,17 +15,22 @@ export const AuthProvider = ({ children }) => {
 
   const login = (token,user_Id) => {
     localStorage.setItem("session_token", token);
+    localStorage.setItem("userId", user_Id);
     setUserId(user_Id)
     setIsAuthenticated(true);
+    console.log(token);
   };
 
   const logout = () => {
     localStorage.removeItem("session_token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("purchasedTemplates");
+    localStorage.removeItem("availableTemplates");
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout ,userId}}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout ,userId,setUserId}}>
       {children}
     </AuthContext.Provider>
   );
