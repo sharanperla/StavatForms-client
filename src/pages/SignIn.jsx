@@ -27,7 +27,7 @@ function SignIn() {
     if (validateForm()) {
       try {
         const response = await fetch(
-          "http://hacksocially.space/server/auth/signin.php",
+          "https://hacksocially.space/server/auth/signin.php",
           {
             method: "POST",
             headers: {

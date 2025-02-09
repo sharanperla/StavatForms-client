@@ -44,7 +44,7 @@ const SignUp = () => {
     setServerError("")
     if (validateForm()) {
       try {
-        const response = await fetch("http://hacksocially.space/server/auth/signup.php", {
+        const response = await fetch("https://hacksocially.space/server/auth/signup.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

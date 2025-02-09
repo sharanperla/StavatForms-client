@@ -10,7 +10,7 @@ function FormResponses({ template, onBack }) {
         <meta name="keywords" content="hacksocially , JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection" />
         <meta property="og:title" content="response | Hacksocially" />
         <meta property="og:description" content="The best website for cyberawareness!" />
-        <meta property="og:image" content="http://hacksocially.space/contact-form.png" />
+        <meta property="og:image" content="https://hacksocially.space/contact-form.png" />
       </Helmet>
     <div className="min-h-screen bg-gray-100" id={`template-${template.template_id}`}>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

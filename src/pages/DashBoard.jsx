@@ -39,7 +39,7 @@ function Dashboard() {
       }
   
       const response = await fetch(
-        "http://hacksocially.space/server/forms/get_forms.php"
+        "https://hacksocially.space/server/forms/get_forms.php"
       );
   
       if (!response.ok) {
@@ -72,7 +72,7 @@ function Dashboard() {
     const token = localStorage.getItem("session_token");
     console.log(token);
     const response = await fetch(
-      "http://hacksocially.space/server/auth/signout.php",
+      "https://hacksocially.space/server/auth/signout.php",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,13 +94,38 @@ function Dashboard() {
   const handlePurchase = async (template) => {
     try {
       console.log(template);
+       // Check if AdSense script is already loaded
+       if (!window.adsbygoogle) {
+        const script = document.createElement("script");
+        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+  
+      // Create a modal-like ad container
+      const adContainer = document.createElement("div");
+      adContainer.innerHTML = `
+        <div id="rewarded-ad" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0008;display:flex;justify-content:center;align-items:center;">
+          <ins class="adsbygoogle"
+               style="display:block; width:90%; max-width:400px; height:300px;"
+               data-ad-client="ca-pub-7833491170425770"
+               data-ad-slot="2309846442"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+        </div>
+      `;
+      document.body.appendChild(adContainer);
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+
+      setTimeout(async () => {
+        document.getElementById("rewarded-ad").remove(); // Remove ad after timeout
       const token = localStorage.getItem("session_token");
       if (!token) {
         alert("No session token found.");
         return;
       }
   
-      const response = await fetch("http://hacksocially.space/server/forms/generate-link.php", {
+      const response = await fetch("https://hacksocially.space/server/forms/generate-link.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,10 +143,12 @@ function Dashboard() {
       } else {
         alert("Purchase failed: " + data.error);
       }
+    }, 6000); // Adjust timeout to match ad duration (usually 5-6s)
     } catch (error) {
       console.error("Error purchasing template:", error);
       alert("An error occurred.");
     }
+    
   };
   
 
@@ -146,7 +173,7 @@ function Dashboard() {
       if (!token) {
         throw new Error("No session token found.");
       }
-      const response = await fetch("http://hacksocially.space/server/forms/get_form_responses.php", {
+      const response = await fetch("https://hacksocially.space/server/forms/get_form_responses.php", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -220,7 +247,7 @@ function Dashboard() {
         <meta name="keywords" content="hacksocially , JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection" />
         <meta property="og:title" content="Dashboard | hacksocially" />
         <meta property="og:description" content="The best website for cyberawareness!" />
-        <meta property="og:image" content="http://hacksocially.space/contact-form.png" />
+        <meta property="og:image" content="https://hacksocially.space/contact-form.png" />
       </Helmet>
     <div className="min-h-screen bg-gray-100">
       {/* Navigation */}

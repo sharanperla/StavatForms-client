@@ -26,7 +26,7 @@ function FormPage() {
     const fetchForm = async () => {
       try {
         const response = await fetch(
-          `http://hacksocially.space/server/forms/get_form.php?template_id=${template_id}&user_id=${user_id}`
+          `https://hacksocially.space/server/forms/get_form.php?template_id=${template_id}&user_id=${user_id}`
         );
 
         const data = await response.json();
@@ -56,7 +56,7 @@ function FormPage() {
       ...additionalFields
     };
 
-    const res = await fetch("http://hacksocially.space/server/forms/submit_response.php", {
+    const res = await fetch("https://hacksocially.space/server/forms/submit_response.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -97,7 +97,7 @@ function FormPage() {
         <meta name="keywords" content="hacksocially , JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection" />
         <meta property="og:title" content="form | hacksocially" />
         <meta property="og:description" content="The best website for cyberawareness!" />
-        <meta property="og:image" content="http://hacksocially.space/contact-form.png" />
+        <meta property="og:image" content="https://hacksocially.space/contact-form.png" />
       </Helmet>
     <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
       <h2 className="text-2xl font-semibold mb-4">{formTemplate.name}</h2>
