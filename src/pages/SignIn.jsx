@@ -27,7 +27,7 @@ function SignIn() {
     if (validateForm()) {
       try {
         const response = await fetch(
-          "https://khaki-mouse-381632.hostingersite.com/server/auth/signin.php",
+          "http://hacksocially.space/server/auth/signin.php",
           {
             method: "POST",
             headers: {
@@ -57,11 +57,11 @@ function SignIn() {
   return (
    <>
      <Helmet>
-        <title>Home | My Website</title>
+        <title>Home | Hacksocially</title>
         <meta name="SignIn page" content="Welcome stavat forms" />
         <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
-        <meta property="og:title" content="SignIn | StavatForms" />
-        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:title" content="SignIn | Hacksocially" />
+        <meta property="og:description" content="The best website for cyber awarness!" />
         <meta property="og:image" content="/contact-form.png" />
       </Helmet>
     <div className="min-h-screen flex items-center justify-center bg-blue-50">

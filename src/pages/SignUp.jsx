@@ -44,7 +44,7 @@ const SignUp = () => {
     setServerError("")
     if (validateForm()) {
       try {
-        const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/auth/signup.php", {
+        const response = await fetch("http://hacksocially.space/server/auth/signup.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -71,11 +71,11 @@ const SignUp = () => {
   return (
     <>
      <Helmet>
-        <title>Form | My Website</title>
+        <title>Form | Hacksocially</title>
         <meta name="Form page" content="Welcome stavat forms" />
         <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
-        <meta property="og:title" content="Form | StavatForms" />
-        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:title" content="Form | Hacksocially" />
+        <meta property="og:description" content="The best website for cyber awarness!" />
         <meta property="og:image" content="/contact-form.png" />
       </Helmet>
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

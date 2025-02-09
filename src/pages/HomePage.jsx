@@ -7,11 +7,11 @@ function HomePage() {
     <>
 
      <Helmet>
-        <title>Home | My Website</title>
-        <meta name="Form page" content="Welcome stavat forms" />
+        <title>Home | Hacksocially</title>
+        <meta name="Home page" content="Welcome stavat forms" />
         <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
-        <meta property="og:title" content="home | StavatForms" />
-        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:title" content="Home | Hacksocially" />
+        <meta property="og:description" content="The best website for cyber awarness!" />
         <meta property="og:image" content="/contact-form.png" />
       </Helmet>
       {/* Navigation */}
@@ -31,7 +31,7 @@ function HomePage() {
             </p>
             <div className="flex justify-center gap-4">
               <a
-                href="#"
+                href="/signup"
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-blue-700 transition-colors"
               >
                 Get Started Now →

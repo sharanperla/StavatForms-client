@@ -39,7 +39,7 @@ function Dashboard() {
       }
   
       const response = await fetch(
-        "https://khaki-mouse-381632.hostingersite.com/server/forms/get_forms.php"
+        "http://hacksocially.space/server/forms/get_forms.php"
       );
   
       if (!response.ok) {
@@ -72,7 +72,7 @@ function Dashboard() {
     const token = localStorage.getItem("session_token");
     console.log(token);
     const response = await fetch(
-      "https://khaki-mouse-381632.hostingersite.com/server/auth/signout.php",
+      "http://hacksocially.space/server/auth/signout.php",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,7 +100,7 @@ function Dashboard() {
         return;
       }
   
-      const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/forms/generate-link.php", {
+      const response = await fetch("http://hacksocially.space/server/forms/generate-link.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,7 +146,7 @@ function Dashboard() {
       if (!token) {
         throw new Error("No session token found.");
       }
-      const response = await fetch("https://khaki-mouse-381632.hostingersite.com/server/forms/get_form_responses.php", {
+      const response = await fetch("http://hacksocially.space/server/forms/get_form_responses.php", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -215,12 +215,12 @@ function Dashboard() {
   return (
     <>
      <Helmet>
-        <title>Home | My Website</title>
-        <meta name="Dashboard page" content="Welcome stavat forms" />
-        <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection" />
-        <meta property="og:title" content="Dashboard | StavatForms" />
-        <meta property="og:description" content="The best website for React developers!" />
-        <meta property="og:image" content="/contact-form.png" />
+        <title>Dashboard | HackSocially</title>
+        <meta name="Dashboard page" content="Welcome hacksocially.space" />
+        <meta name="keywords" content="hacksocially , JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection" />
+        <meta property="og:title" content="Dashboard | hacksocially" />
+        <meta property="og:description" content="The best website for cyberawareness!" />
+        <meta property="og:image" content="http://hacksocially.space/contact-form.png" />
       </Helmet>
     <div className="min-h-screen bg-gray-100">
       {/* Navigation */}

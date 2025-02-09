@@ -4,13 +4,13 @@ import { Helmet } from 'react-helmet-async'
 function Error() {
   return (
     <>
-     <Helmet>
-        <title>Home | My Website</title>
-        <meta name="error page" content="Welcome stavat forms" />
-        <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
-        <meta property="og:title" content="Error | StavatForms" />
-        <meta property="og:description" content="The best website for React developers!" />
-        <meta property="og:image" content="/contact-form.png" />
+      <Helmet>
+        <title>Error | HackSocially</title>
+        <meta name="Error page" content="Welcome hacksocially.space" />
+        <meta name="keywords" content="hacksocially , JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection" />
+        <meta property="og:title" content="Error | Hacksocially" />
+        <meta property="og:description" content="The best website for cyberawareness!" />
+        <meta property="og:image" content="http://hacksocially.space/contact-form.png" />
       </Helmet>
     <div>
       <h1>Something went wrong!</h1>

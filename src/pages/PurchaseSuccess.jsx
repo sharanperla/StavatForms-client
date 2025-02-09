@@ -10,11 +10,11 @@ function SuccessPage({ link, onClose }) {
   return (
     <>
      <Helmet>
-        <title>Success | My Website</title>
+        <title>Success page | Hacksocially</title>
         <meta name="Success page" content="Welcome stavat forms" />
         <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
-        <meta property="og:title" content="Success | StavatForms" />
-        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:title" content="Success | Hacksocially" />
+        <meta property="og:description" content="The best website for cyber awarness!" />
         <meta property="og:image" content="/contact-form.png" />
       </Helmet>
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
