@@ -1,6 +1,17 @@
+import { Helmet } from "react-helmet-async";
+
 function FormResponses({ template, onBack }) {
   console.log('tempt',template);
   return (
+    <>
+    <Helmet>
+       <title>Form | My Website</title>
+       <meta name="Form page" content="Welcome stavat forms" />
+       <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
+       <meta property="og:title" content="Form | StavatForms" />
+       <meta property="og:description" content="The best website for React developers!" />
+       <meta property="og:image" content="/contact-form.png" />
+     </Helmet>
     <div className="min-h-screen bg-gray-100" id={`template-${template.template_id}`}>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -43,6 +54,7 @@ function FormResponses({ template, onBack }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

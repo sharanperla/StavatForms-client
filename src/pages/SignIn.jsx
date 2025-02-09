@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Import authentication context
+import { Helmet } from "react-helmet-async";
 
 function SignIn() {
   const { login } = useAuth(); // Use login function from context
@@ -54,6 +55,15 @@ function SignIn() {
   
 
   return (
+   <>
+     <Helmet>
+        <title>Home | My Website</title>
+        <meta name="SignIn page" content="Welcome stavat forms" />
+        <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
+        <meta property="og:title" content="SignIn | StavatForms" />
+        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:image" content="/contact-form.png" />
+      </Helmet>
     <div className="min-h-screen flex items-center justify-center bg-blue-50">
       <div className="bg-white bg-opacity-10 p-8 rounded-lg shadow-lg w-96">
         <h1 className="text-3xl font-medium mb-6 text-center text-black">Sign In</h1>
@@ -95,6 +105,7 @@ function SignIn() {
         </p>
       </div>
     </div>
+    </>
   );
 }
 

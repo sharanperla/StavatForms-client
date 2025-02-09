@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
+import { Helmet } from "react-helmet-async";
 
 const SignUp = () => {
   const { login } = useAuth(); 
@@ -68,6 +69,15 @@ const SignUp = () => {
   }
 
   return (
+    <>
+     <Helmet>
+        <title>Form | My Website</title>
+        <meta name="Form page" content="Welcome stavat forms" />
+        <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
+        <meta property="og:title" content="Form | StavatForms" />
+        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:image" content="/contact-form.png" />
+      </Helmet>
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
@@ -130,6 +140,7 @@ const SignUp = () => {
         </p>
       </div>
     </div>
+    </>
   )
 }
 

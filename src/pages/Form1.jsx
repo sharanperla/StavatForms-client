@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 
 function FormPage() {
@@ -89,6 +90,15 @@ function FormPage() {
     return <p>Loading form...</p>;
   }
   return (
+    <>
+     <Helmet>
+        <title>Form | My Website</title>
+        <meta name="Form page" content="Welcome stavat forms" />
+        <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
+        <meta property="og:title" content="Form | StavatForms" />
+        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:image" content="/contact-form.png" />
+      </Helmet>
     <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
       <h2 className="text-2xl font-semibold mb-4">{formTemplate.name}</h2>
       <p className="text-gray-600 mb-4">{formTemplate.description}</p>
@@ -141,6 +151,7 @@ function FormPage() {
         </form>
       )}
     </div>
+    </>
   );
 }
 

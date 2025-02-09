@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 
 function SuccessPage({ link, onClose }) {
   const handleCopy = () => {
@@ -7,6 +8,15 @@ function SuccessPage({ link, onClose }) {
   };
 
   return (
+    <>
+     <Helmet>
+        <title>Success | My Website</title>
+        <meta name="Success page" content="Welcome stavat forms" />
+        <meta name="keywords" content="JobSim, Job Simulation, Social Media, Cyber Awareness, Cybersecurity, Phishing Attack, Online Safety, Digital Security, Data Protection " />
+        <meta property="og:title" content="Success | StavatForms" />
+        <meta property="og:description" content="The best website for React developers!" />
+        <meta property="og:image" content="/contact-form.png" />
+      </Helmet>
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-md text-center">
         <h2 className="text-2xl font-semibold text-green-600">Purchase Successful!</h2>
@@ -28,6 +38,7 @@ function SuccessPage({ link, onClose }) {
         </button>
       </div>
     </div>
+    </>
   );
 }
 
