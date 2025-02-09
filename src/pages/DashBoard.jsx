@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import SuccessPage from "./PurchaseSuccess";
 import FormResponses from "./FormResponse";
 import { useAuth } from "../context/AuthContext";
+import { Copy } from "lucide-react";
 
 function Dashboard() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [activeTab, setActiveTab] = useState("available");
   const [showSuccessPage, setShowSuccessPage] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
+  const [copied,setCopied]=useState("");
   const [viewingResponses, setViewingResponses] = useState(null);
   const [availableTemplates, setAvailableTemplates] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -90,6 +92,7 @@ function Dashboard() {
 
   const handlePurchase = async (template) => {
     try {
+      console.log(template);
       const token = localStorage.getItem("session_token");
       if (!token) {
         alert("No session token found.");
@@ -107,6 +110,7 @@ function Dashboard() {
   
       const data = await response.json();
       if (data.success) {
+        console.log(data);
         setGeneratedLink(data.link);
         setShowSuccessPage(true);
         fetchPurchasedTemplates(); // Reload purchased templates after purchase
@@ -177,6 +181,13 @@ function Dashboard() {
       fetchPurchasedTemplates();
     }
   }, []);
+
+
+  const handleCopy = (link, id) => {
+    navigator.clipboard.writeText(link);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   if (showSuccessPage) {
     return (
@@ -317,17 +328,26 @@ function Dashboard() {
                     className="bg-white rounded-lg shadow-sm overflow-hidden"
                   >
                     <div className="p-4">
-                      <h3 className="text-lg font-semibold mb-2">
-                        {template.name}
-                      </h3>
-                      <p className="text-gray-600 mb-2">
-                        Generated URL:{" "}
+                      <h3 className="text-lg font-semibold mb-2">{template.form_name}</h3>
+                      <p className="text-gray-600 mb-2 flex items-center">
+                        <span className="truncate max-w-[70%] sm:max-w-full">Generated URL: </span>
                         <a
-                          href={template.url}
-                          className="text-blue-600 hover:underline"
+                          href={template.generated_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline truncate ml-2"
                         >
-                          {template.url}
+                          {template.generated_link}
                         </a>
+                        <button
+                          className="ml-2 p-1 text-gray-600 hover:text-black"
+                          onClick={() => handleCopy(template.generated_link, template.template_id)}
+                        >
+                          <Copy size={18} />
+                        </button>
+                        {copied === template.template_id && (
+                          <span className="ml-2 text-green-600 text-sm">Copied!</span>
+                        )}
                       </p>
                       <button
                         className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
