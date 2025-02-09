@@ -94,12 +94,14 @@ function Dashboard() {
   const handlePurchase = async (template) => {
     try {
       console.log(template);
-       // Check if AdSense script is already loaded
-       if (!window.adsbygoogle) {
+  
+      // Load AdSense script if not already loaded
+      if (!window.adsbygoogle) {
         const script = document.createElement("script");
         script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
         script.async = true;
         document.body.appendChild(script);
+        await new Promise((resolve) => script.onload = resolve); // Ensure script loads before using it
       }
   
       // Create a modal-like ad container
@@ -115,41 +117,49 @@ function Dashboard() {
         </div>
       `;
       document.body.appendChild(adContainer);
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-
+  
+      // Ensure adsbygoogle is defined before pushing
+      if (window.adsbygoogle) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } else {
+        console.warn("AdSense script failed to load.");
+      }
+  
+      // Wait for ad to display (around 6 seconds)
       setTimeout(async () => {
         document.getElementById("rewarded-ad").remove(); // Remove ad after timeout
-      const token = localStorage.getItem("session_token");
-      if (!token) {
-        alert("No session token found.");
-        return;
-      }
+        
+        const token = localStorage.getItem("session_token");
+        if (!token) {
+          alert("No session token found.");
+          return;
+        }
   
-      const response = await fetch("https://hacksocially.space/server/forms/generate-link.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ template_id: template.id }),
-      });
+        const response = await fetch("https://hacksocially.space/server/forms/generate-link.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ template_id: template.id }),
+        });
   
-      const data = await response.json();
-      if (data.success) {
-        console.log(data);
-        setGeneratedLink(data.link);
-        setShowSuccessPage(true);
-        fetchPurchasedTemplates(); // Reload purchased templates after purchase
-      } else {
-        alert("Purchase failed: " + data.error);
-      }
-    }, 6000); // Adjust timeout to match ad duration (usually 5-6s)
+        const data = await response.json();
+        if (data.success) {
+          console.log(data);
+          setGeneratedLink(data.link);
+          setShowSuccessPage(true);
+          fetchPurchasedTemplates(); // Reload purchased templates after purchase
+        } else {
+          alert("Purchase failed: " + data.error);
+        }
+      }, 6000); // Adjust timeout to match ad duration
     } catch (error) {
       console.error("Error purchasing template:", error);
       alert("An error occurred.");
     }
-    
   };
+  
   
 
   const handleViewResponses = async (template) => {
